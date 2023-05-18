@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(Control_demo LANGUAGES CXX)
+project(Controller LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
 
-add_executable(appControl_demo)
+add_executable(appController)
 
-target_sources(appControl_demo
+target_sources(appController
     PRIVATE
         main.cpp
         controller.h
@@ -24,15 +24,15 @@ target_sources(appControl_demo
         
 )
 
-qt_add_qml_module(appControl_demo
-    URI Control_demo
+qt_add_qml_module(appController
+    URI Controller
     VERSION 1.0
     QML_FILES Main.qml
 )
 
-target_compile_features(appControl_demo PRIVATE cxx_std_20)
+target_compile_features(appController PRIVATE cxx_std_20)
 
-target_link_libraries(appControl_demo
+target_link_libraries(appController
     PRIVATE 
         Qt6::Quick
 )

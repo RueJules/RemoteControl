@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(demo LANGUAGES CXX)
+project(Controlled LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
 
-add_executable(appdemo)
+add_executable(appControlled)
 
-target_sources(appdemo
+target_sources(appControlled
     PRIVATE
         main.cpp
         controlled.cpp
@@ -26,15 +26,15 @@ target_sources(appdemo
         
 )
 
-qt_add_qml_module(appdemo
-    URI demo
+qt_add_qml_module(appControlled
+    URI Controlled
     VERSION 1.0
     QML_FILES Main.qml
 )
 
-target_compile_features(appdemo PRIVATE cxx_std_20)
+target_compile_features(appControlled PRIVATE cxx_std_20)
 
-target_link_libraries(appdemo
+target_link_libraries(appControlled
     PRIVATE 
         Qt6::Quick
 )
