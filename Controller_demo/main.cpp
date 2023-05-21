@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("controller", controller);
     engine.addImageProvider(QLatin1String("screen"), controller->getImageProvider());
-    engine.load(QUrl(QStringLiteral("qrc:/Control_demo/Main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/Controller/Main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
     return app.exec();

@@ -20,6 +20,7 @@ target_sources(appController
         socket.cpp
         socket.h
         remoteevent.h
+        keythread.h keythread.cpp
     PUBLIC
         
 )

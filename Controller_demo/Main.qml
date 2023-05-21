@@ -59,7 +59,7 @@ ApplicationWindow{
 
         }
     }
-    Item{
+ /*   Item{
         anchors.fill: parent
         focus:true
         Keys.onPressed: (event)=>{
@@ -86,7 +86,7 @@ ApplicationWindow{
             console.log("键盘松开")
         }
     }
-
+*/
 
 
 }

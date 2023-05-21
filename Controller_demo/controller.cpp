@@ -1,11 +1,10 @@
 #include "controller.h"
 #include "imageprovider.h"
 #include "socket.h"
-
+#include "keythread.h"
 
 #include <QGuiApplication>
 #include <QHostAddress>
-#include <QThread>
 
 Controller::Controller(QObject *parent)
     : QObject(parent)
@@ -17,6 +16,10 @@ Controller::Controller(QObject *parent)
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     m_socket->moveToThread(thread);//刚创建就交给子进程？？那主进程干什么
     thread->start();
+    KeyThread *keythread = new KeyThread(this);
+    connect(keythread,&KeyThread::keyPressed,this ,&Controller::keyPressed);
+    connect(keythread,&KeyThread::keyReleased,this ,&Controller::keyReleased);
+    keythread->start();
 }
 //连接服务器
 void Controller::requestNewConnection()
