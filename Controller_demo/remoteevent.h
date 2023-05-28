@@ -10,12 +10,15 @@ public:
     enum class EventType
     {
         NoType = 0,
-        Pressed,//1
-        Released,//2
-        Moved,//3
+        MouseLeftPressed,//1
+        MouseLeftReleased,//2
+        MouseMoved,//3
         KeyInput,//4
         KeyReleased,
-        Entered
+        MouseEntered,
+        MouseRoll,
+        MouseRightPressed,
+        MouseRightReleased
     };
 
     RemoteEvent() { }

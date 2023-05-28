@@ -17,8 +17,10 @@ public:
     Q_INVOKABLE void finish();
     Q_INVOKABLE void requestNewConnection();
 
-    Q_INVOKABLE void mousePressed(const QPointF &position);
-    Q_INVOKABLE void mouseReleased(const QPointF &position);
+    Q_INVOKABLE void leftMousePressed(const QPointF &position);
+    Q_INVOKABLE void leftMouseReleased(const QPointF &position);
+    Q_INVOKABLE void rightMousePressed(const QPointF &position);
+    Q_INVOKABLE void rightMouseReleased(const QPointF &position);
     Q_INVOKABLE void mouseMoved(const QPointF &position);
     Q_INVOKABLE void mouseEntered(const QPointF &position);
     Q_INVOKABLE void keyPressed(const int &key);

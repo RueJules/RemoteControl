@@ -16,15 +16,15 @@ Controller::Controller(QObject *parent)
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     m_socket->moveToThread(thread);//刚创建就交给子进程？？那主进程干什么
     thread->start();
-    KeyThread *keythread = new KeyThread(this);
-    connect(keythread,&KeyThread::keyPressed,this ,&Controller::keyPressed);
-    connect(keythread,&KeyThread::keyReleased,this ,&Controller::keyReleased);
-    keythread->start();
+//    KeyThread *keythread = new KeyThread(this);
+//    connect(keythread,&KeyThread::keyPressed,this ,&Controller::keyPressed);
+//    connect(keythread,&KeyThread::keyReleased,this ,&Controller::keyReleased);
+//    keythread->start();
 }
 //连接服务器
 void Controller::requestNewConnection()
 {
-    QHostAddress hostAddress(QString{"10.252.11.56"});
+    QHostAddress hostAddress(QString{"10.252.110.251"});
     QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));//指定服务器的ip和端口
 }
 //断开连接
@@ -43,28 +43,38 @@ void Controller::readScreenData(const QByteArray &screenData)
 }
 
 //鼠标事件
-void Controller::mousePressed(const QPointF &position)
+void Controller::leftMousePressed(const QPointF &position)
 {
-     sendRemoteEvent(RemoteEvent::EventType::Pressed, position);
-     qDebug()<<"按下";
+     sendRemoteEvent(RemoteEvent::EventType::MouseLeftPressed, position);
 }
 
-void Controller::mouseReleased(const QPointF &position)
+void Controller::leftMouseReleased(const QPointF &position)
 {
-     sendRemoteEvent(RemoteEvent::EventType::Released, position);
+     sendRemoteEvent(RemoteEvent::EventType::MouseLeftReleased, position);
 }
+void Controller::rightMousePressed(const QPointF &position)
+{
+     sendRemoteEvent(RemoteEvent::EventType::MouseRightPressed, position);
+     qDebug("鼠标右键");
+}
+
+void Controller::rightMouseReleased(const QPointF &position)
+{
+     sendRemoteEvent(RemoteEvent::EventType::MouseRightReleased, position);
+}
+
 
 void Controller::mouseMoved(const QPointF &position)
 {
 
-     sendRemoteEvent(RemoteEvent::EventType::Moved, position);
+     sendRemoteEvent(RemoteEvent::EventType::MouseMoved, position);
 
 }
 
 void Controller::mouseEntered(const QPointF &position)
 {
 
-     sendRemoteEvent(RemoteEvent::EventType::Entered, position);
+     sendRemoteEvent(RemoteEvent::EventType::MouseEntered, position);
 
 }
 

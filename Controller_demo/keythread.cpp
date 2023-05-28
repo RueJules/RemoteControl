@@ -12,7 +12,7 @@ KeyThread::KeyThread(QObject *parent):QThread(parent)
 
 void KeyThread::run()
 {
-    const char *dev="/dev/input/event3";
+    const char *dev="/dev/input/event4";
     int retval;
     fd_set readfds;
     struct timeval tv;
