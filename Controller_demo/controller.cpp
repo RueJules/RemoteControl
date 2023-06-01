@@ -2,15 +2,15 @@
 #include "imageprovider.h"
 #include "socket.h"
 #include "keythread.h"
-
 #include <QGuiApplication>
 #include <QHostAddress>
-
+#include <QInputDialog>
 Controller::Controller(QObject *parent)
     : QObject(parent)
 {
     m_provider = new ImageProvider();
     m_socket = new Socket;
+
     connect(m_socket, &Socket::hasScreenData, this, &Controller::readScreenData);
     QThread *thread = new QThread;
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
@@ -22,15 +22,29 @@ Controller::Controller(QObject *parent)
 //    keythread->start();
 }
 //连接服务器
+
 void Controller::requestNewConnection()
 {
-    QHostAddress hostAddress(QString{"10.252.110.251"});
-    QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));//指定服务器的ip和端口
+    bool ok;
+    QString text = QInputDialog::getText(nullptr,tr("input IP"),
+                                         tr("IP:"), QLineEdit::Normal,
+                                         "127.0.0.1", &ok);
+    if(ok && text.isEmpty()){
+        QHostAddress hostAddress(text);
+        QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800),Q_ARG(bool, flag));
+
+    }
+    if(!flag) qDebug()<<"connect fail";
+    else qDebug()<<"connect ok";
+    //指定服务器的ip和端口
 }
+
 //断开连接
 void Controller::finish()
 {
-     QMetaObject::invokeMethod(m_socket, "abort");
+     QMetaObject::invokeMethod(m_socket, "abort",Q_ARG(bool, flag));
+
+     if(!flag) qDebug()<<"disconnect";
 }
 
 //读图片数据

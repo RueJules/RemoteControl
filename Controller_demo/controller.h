@@ -10,13 +10,13 @@ class Controller : public QObject
 {
     Q_OBJECT
 public:
+    bool flag=false;//connect state
     explicit Controller(QObject *parent = nullptr);//explicit禁止隐式类型
 
     ImageProvider* getImageProvider() { return m_provider; }
 
     Q_INVOKABLE void finish();
     Q_INVOKABLE void requestNewConnection();
-
     Q_INVOKABLE void leftMousePressed(const QPointF &position);
     Q_INVOKABLE void leftMouseReleased(const QPointF &position);
     Q_INVOKABLE void rightMousePressed(const QPointF &position);

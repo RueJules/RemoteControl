@@ -12,11 +12,10 @@ public:
     explicit Socket(QObject *parent = nullptr);
     ~Socket();
 
-    Q_INVOKABLE void abort();
-    Q_INVOKABLE void connectHost(const QHostAddress &host, quint16 port){
-        QTcpSocket::connectToHost(host,port);
-    }
+    Q_INVOKABLE void abort( bool &flag);
+    Q_INVOKABLE void connectHost(const QHostAddress &host, quint16 port,bool &flag);
     Q_INVOKABLE void writeToSocket(const RemoteEvent &event);
+
 signals:
     void hasScreenData(const QByteArray &screenData);
     void hasEventData(const RemoteEvent &event);

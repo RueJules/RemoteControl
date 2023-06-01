@@ -1,17 +1,16 @@
-#include <QGuiApplication>
+//#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTime>
-
+#include<QApplication>
 #include "controlled.h"
 #include "virtualmouse.h"
 #include"remoteevent.h"
 #include "systemapi.h"
-
+#include<QMessageBox>
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
-
+    QApplication app(argc, argv);
     qRegisterMetaType<DataBlock>("DataBlock");
     qRegisterMetaType<RemoteEvent>("RemoteEvent");
 

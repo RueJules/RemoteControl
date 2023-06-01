@@ -14,11 +14,26 @@ Socket::~Socket()
 
 }
 
-void Socket::abort()
+void Socket::abort( bool &flag)
 {
     QTcpSocket::abort();//中止当前连接并重置套接字。立即关闭套接字，丢弃写入缓冲区中的任何挂起数据
     m_recvData.clear();
     m_recvHeader.clear();
+    if(this->state()==QAbstractSocket::ConnectedState){
+        flag=true;
+    }else {
+        flag=false;
+    }
+}
+
+void Socket::connectHost(const QHostAddress &host, quint16 port, bool &flag)
+{
+    QTcpSocket::connectToHost(host,port);
+    if(this->state()==QAbstractSocket::ConnectedState){
+        flag=true;
+    }else {
+        flag=false;
+    }
 }
 
 
@@ -35,6 +50,7 @@ void Socket::writeToSocket(const RemoteEvent &event)//把事件转化为信息�
     write(data);//再把data写入套接字？？
     flush();
 }
+
 
 
 void Socket::processRecvBlock()

@@ -7,29 +7,69 @@ ApplicationWindow{
     width: 800
     height: 480
     visible: true
+    Button{
+        id:con
+        width: parent.width/3
+        height: 25
+        text: "connect"
+        onClicked: {
+            controller.requestNewConnection();
+
+        }
+        anchors.top: image.bottom
+    }
+    Button{
+        id:discon
+        width: parent.width/3
+        height: 25
+        text: "disconnect"
+        onClicked: {
+            controller.finish();
+        }
+        anchors.left: con.right
+        anchors.top: con.top
+    }
+    Button{
+        id:call
+        width: parent.width/3
+        height: 25
+        text: "call"
+        onClicked: {
+            controller.finish();
+        }
+        anchors.left: discon.right
+        anchors.top: con.top
+    }
     Image {
         id: image
-        anchors.fill: parent
-        sourceSize: Qt.size(parent.width, parent.height)
+        width: parent.width
+        height: parent.height-con.height
+        sourceSize: Qt.size(image.width,image.height)
         cache: false//指定是否应缓存图像。默认值为true。在处理大型图像时，将缓存设置为false非常有用，以确保它们不会以牺牲小型“ui元素”图像为代价进行缓存。什么意思
+
         Connections {
             target: controller
-            onNeedUpdate: {
+            function onNeedUpdate() {
                 image.source = "image://screen/" + Date.now();
             }
         }
     }
-//    TapHandler{
-//        onTapped: {
-//            let ratio = Qt.point(point.x / root.width,point.y/ root.height);
-//            controller.mousePressed(ratio);//为什么能直接用controller的
-//        }
-//    }
+
+    TapHandler{
+        onTapped: {
+            let ratio = Qt.point(point.x / root.width,point.y/ root.height);
+            controller.mousePressed(ratio);//为什么能直接用controller的
+        }
+    }
     MouseArea {
+
         id: controllerArea
         hoverEnabled:true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        anchors.fill: parent
+//        anchors.fill: parent
+        width: parent.width
+        height: parent.height-con.height
+        anchors.bottom: con.top
         property int count:0
         onEntered: {
             let ratio = Qt.point(mouseX / root.width, mouseY/ root.height);
@@ -58,6 +98,7 @@ ApplicationWindow{
         }
     }
     Item{
+        id:keyaa
         anchors.fill: parent
 
         focus:true
@@ -667,6 +708,7 @@ ApplicationWindow{
             }
         }
     }
+
 }
 
 

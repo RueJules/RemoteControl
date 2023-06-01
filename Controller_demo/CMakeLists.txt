@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.15)
 
 project(Controller LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
-
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
+#find_package(Qt6 REQUIRED COMPONENTS Core)
 qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
 
 add_executable(appController)
@@ -36,6 +37,8 @@ target_compile_features(appController PRIVATE cxx_std_20)
 target_link_libraries(appController
     PRIVATE 
         Qt6::Quick
+        Qt6::Widgets
+        #Qt6::Core
 )
 
 
