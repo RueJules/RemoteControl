@@ -88,24 +88,24 @@ void SystemApi::mouseMove(const QPointF &pos)
     gettimeofday(&event.time, 0);
 
     //移动鼠标X坐标
-    //event.type = EV_REL;
-    event.type = EV_ABS;
-    //event.value =(int)pos.x() - oldPoint.x();
-    event.value = pos.x();
-    //event.code = REL_X;
-    event.code = ABS_X;
+    event.type = EV_REL;
+    //event.type = EV_ABS;
+    event.value =(int)pos.x() - oldPoint.x();
+    //event.value = pos.x();
+    event.code = REL_X;
+    //event.code = ABS_X;
     write(VirtualMouse::device_handler, &event, sizeof(event));
     sync();
 
     //qDebug << "x差："<<event.value;
 
     //移动鼠标Y坐标
-    //event.type = EV_REL;
-    event.type = EV_ABS;
-    //event.value = (int)pos.y() - oldPoint.y();
-    event.value = pos.y();
-    //event.code = REL_Y;
-    event.code = ABS_Y;
+    event.type = EV_REL;
+    //event.type = EV_ABS;
+    event.value = (int)pos.y() - oldPoint.y();
+    //event.value = pos.y();
+    event.code = REL_Y;
+    //event.code = ABS_Y;
     write(VirtualMouse::device_handler, &event, sizeof(event));
     sync();
 
