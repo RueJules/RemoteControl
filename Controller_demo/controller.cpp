@@ -25,26 +25,21 @@ Controller::Controller(QObject *parent)
 
 void Controller::requestNewConnection()
 {
-    bool ok;
-    QString text = QInputDialog::getText(nullptr,tr("input IP"),
-                                         tr("IP:"), QLineEdit::Normal,
-                                         "127.0.0.1", &ok);
-    if(ok && text.isEmpty()){
-        QHostAddress hostAddress(text);
-        QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800),Q_ARG(bool, flag));
 
-    }
-    if(!flag) qDebug()<<"connect fail";
-    else qDebug()<<"connect ok";
+        QHostAddress hostAddress("");
+        QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
+
+
+
     //指定服务器的ip和端口
 }
 
 //断开连接
 void Controller::finish()
 {
-     QMetaObject::invokeMethod(m_socket, "abort",Q_ARG(bool, flag));
+     QMetaObject::invokeMethod(m_socket, "abort");
 
-     if(!flag) qDebug()<<"disconnect";
+
 }
 
 //读图片数据

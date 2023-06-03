@@ -10,7 +10,6 @@ class Controller : public QObject
 {
     Q_OBJECT
 public:
-    bool flag=false;//connect state
     explicit Controller(QObject *parent = nullptr);//explicit禁止隐式类型
 
     ImageProvider* getImageProvider() { return m_provider; }

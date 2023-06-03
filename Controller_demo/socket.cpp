@@ -14,26 +14,16 @@ Socket::~Socket()
 
 }
 
-void Socket::abort( bool &flag)
+void Socket::abort()
 {
     QTcpSocket::abort();//中止当前连接并重置套接字。立即关闭套接字，丢弃写入缓冲区中的任何挂起数据
     m_recvData.clear();
     m_recvHeader.clear();
-    if(this->state()==QAbstractSocket::ConnectedState){
-        flag=true;
-    }else {
-        flag=false;
-    }
 }
 
-void Socket::connectHost(const QHostAddress &host, quint16 port, bool &flag)
+void Socket::connectHost(const QHostAddress &host, quint16 port)
 {
     QTcpSocket::connectToHost(host,port);
-    if(this->state()==QAbstractSocket::ConnectedState){
-        flag=true;
-    }else {
-        flag=false;
-    }
 }
 
 
