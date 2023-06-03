@@ -15,6 +15,8 @@ public:
     Q_INVOKABLE void abort();
     Q_INVOKABLE void connectHost(const QHostAddress &host, quint16 port);
     Q_INVOKABLE void writeToSocket(const RemoteEvent &event);
+    Q_INVOKABLE void writeToSocket(QByteArray data){QTcpSocket::write(data);}
+    Q_INVOKABLE QByteArray readAllSocket(){return QTcpSocket::readAll();}
 
 signals:
     void hasScreenData(const QByteArray &screenData);
@@ -26,4 +28,16 @@ private:
     BlockHeader m_recvHeader;
 };
 
+
+
+class SocketAudio : public QTcpSocket
+{
+    Q_OBJECT
+public:
+    SocketAudio(QObject *parent = nullptr):QTcpSocket(parent){}
+    ~SocketAudio(){}
+    Q_INVOKABLE void writeToSocket(QByteArray data){QTcpSocket::write(data);}
+    Q_INVOKABLE QByteArray readAllSocket(){return QTcpSocket::readAll();}
+
+};
 #endif // SOCKET_H

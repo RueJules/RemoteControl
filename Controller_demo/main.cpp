@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QHostAddress>("QHostAddress");
     Controller *controller = new Controller;
     controller->requestNewConnection();
+    controller->Communication();
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("controller", controller);
     engine.addImageProvider(QLatin1String("screen"), controller->getImageProvider());

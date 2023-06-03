@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include"remoteevent.h"
+#include"inputclient.h"
+#include"outputclient.h"
 
 class Socket;
 class ImageProvider;
@@ -29,6 +31,8 @@ public:
 
 public slots:
     void readScreenData(const QByteArray &screenData);
+    void Communication();
+    void CancelCom();
 signals:
     void connected();
     void disconnected();
@@ -38,6 +42,8 @@ private:
 
     Socket *m_socket;//这是跟服务器连接的套接字
     ImageProvider *m_provider;
+    InputClient *input;
+    OutputClient *output;
 
 };
 

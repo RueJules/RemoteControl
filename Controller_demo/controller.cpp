@@ -26,7 +26,7 @@ Controller::Controller(QObject *parent)
 void Controller::requestNewConnection()
 {
 
-        QHostAddress hostAddress("");
+    QHostAddress hostAddress(QString{"10.252.47.61"});
         QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
 
 
@@ -49,6 +49,28 @@ void Controller::readScreenData(const QByteArray &screenData)
      pixmap.loadFromData(screenData);
      m_provider->setPixmap(pixmap);
      emit needUpdate();
+}
+
+void Controller::Communication()
+{
+     input=new InputClient();
+     QThread *thread1 = new QThread;
+     connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
+     input->moveToThread(thread1);//刚创建就交给子进程？？那主进程干什么
+     thread1->start();
+
+     output=new OutputClient();
+     QThread *thread2 = new QThread;
+     connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
+     output->moveToThread(thread2);//刚创建就交给子进程？？那主进程干什么
+     thread2->start();
+
+}
+
+void Controller::CancelCom()
+{
+     delete input;
+     delete output;
 }
 
 //鼠标事件

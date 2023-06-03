@@ -4,6 +4,7 @@ project(Controller LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 #find_package(Qt6 REQUIRED COMPONENTS Core)
 qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
 
@@ -22,6 +23,10 @@ target_sources(appController
         socket.h
         remoteevent.h
         keythread.h keythread.cpp
+        inputclient.cpp
+        inputclient.h
+        outputclient.cpp
+        outputclient.h
     PUBLIC
         
 )
@@ -30,6 +35,7 @@ qt_add_qml_module(appController
     URI Controller
     VERSION 1.0
     QML_FILES Main.qml
+
 )
 
 target_compile_features(appController PRIVATE cxx_std_20)
@@ -38,6 +44,7 @@ target_link_libraries(appController
     PRIVATE 
         Qt6::Quick
         Qt6::Widgets
+        Qt6::Multimedia
         #Qt6::Core
 )
 
