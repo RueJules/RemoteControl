@@ -12,6 +12,8 @@ Controller::Controller(QObject *parent)
     m_socket = new Socket;
 
     connect(m_socket, &Socket::hasScreenData, this, &Controller::readScreenData);
+    connect(m_socket,&Socket::connected,this,&Controller::changeflag);
+    connect(m_socket,&Socket::disconnected,this,&Controller::changeflag);
     QThread *thread = new QThread;
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     m_socket->moveToThread(thread);//刚创建就交给子进程？？那主进程干什么
@@ -23,13 +25,19 @@ Controller::Controller(QObject *parent)
 }
 //连接服务器
 
-void Controller::requestNewConnection()
+//void Controller::requestNewConnection()
+//{
+
+//    QHostAddress hostAddress(QString{"10.252.47.61"});
+//    QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
+//    //指定服务器的ip和端口
+//}
+
+void Controller::requestNewConnection(QString ip)
 {
 
-    QHostAddress hostAddress(QString{"10.252.47.61"});
-        QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
-
-
+    QHostAddress hostAddress(QString{ip});
+    QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
 
     //指定服务器的ip和端口
 }
@@ -39,8 +47,9 @@ void Controller::finish()
 {
      QMetaObject::invokeMethod(m_socket, "abort");
 
-
 }
+
+
 
 //读图片数据
 void Controller::readScreenData(const QByteArray &screenData)
@@ -51,26 +60,57 @@ void Controller::readScreenData(const QByteArray &screenData)
      emit needUpdate();
 }
 
-void Controller::Communication()
+void Controller::communication(QString ip)
 {
+
      input=new InputClient();
+     input->connectInput(ip);
      QThread *thread1 = new QThread;
      connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
+     connect(this, &Controller::sin_discommunication, thread1, &QThread::quit);
      input->moveToThread(thread1);//刚创建就交给子进程？？那主进程干什么
      thread1->start();
 
      output=new OutputClient();
+     output->connectOutput(ip);
      QThread *thread2 = new QThread;
      connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
+     connect(this, &Controller::sin_discommunication, thread2, &QThread::quit);
      output->moveToThread(thread2);//刚创建就交给子进程？？那主进程干什么
      thread2->start();
-
 }
+
+void Controller::discommunication()
+{
+     emit sin_discommunication();
+     qDebug()<<"*****************";
+}
+
+//void Controller::Communication()
+//{
+//     input=new InputClient();
+//     QThread *thread1 = new QThread;
+//     connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
+//     input->moveToThread(thread1);//刚创建就交给子进程？？那主进程干什么
+//     thread1->start();
+
+//     output=new OutputClient();
+//     QThread *thread2 = new QThread;
+//     connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
+//     output->moveToThread(thread2);//刚创建就交给子进程？？那主进程干什么
+//     thread2->start();
+
+//}
 
 void Controller::CancelCom()
 {
      delete input;
      delete output;
+}
+
+void Controller::changeflag()
+{
+     flag=!flag;
 }
 
 //鼠标事件

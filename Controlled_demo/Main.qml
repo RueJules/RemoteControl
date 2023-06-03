@@ -6,15 +6,6 @@ ApplicationWindow {
     Button{
         id:btn
     }
-    MessageDialog {
-        visible: true
-        text: "The document has been modified."
-        informativeText: "Do you want to save your changes?"
-        buttons: MessageDialog.Ok | MessageDialog.Cancel
-
-        //onAccepted:
-        //onReject:
-    }
 
     /*Item {
         id: root

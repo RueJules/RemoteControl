@@ -8,9 +8,11 @@
 
 class InputClient : public QObject
 {
+    Q_OBJECT
 public:
     InputClient(QObject *parent = nullptr);
     ~InputClient();
+    void connectInput(QString ip);
 
 public slots:
     void readyReadSlot();

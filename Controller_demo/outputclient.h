@@ -13,6 +13,7 @@ class OutputClient : public QObject
 public:
     OutputClient(QObject *parent = nullptr);
     ~OutputClient();
+    void connectOutput(QString ip);
 public slots:
     void readySend();
 private:

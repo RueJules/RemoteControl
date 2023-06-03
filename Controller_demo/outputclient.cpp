@@ -3,8 +3,8 @@
 
 OutputClient::OutputClient(QObject *parent):QObject{parent}
 {
-    m_socketWrite = new SocketAudio;//读麦克风写入套接字
-    m_socketWrite->connectToHost(QHostAddress(QString("10.252.47.61")), 8877);
+//    m_socketWrite = new SocketAudio;//读麦克风写入套接字
+//    m_socketWrite->connectToHost(QHostAddress(QString("10.252.47.61")), 8877);
 
     QAudioFormat format;
     format.setSampleRate(44100);
@@ -16,9 +16,9 @@ OutputClient::OutputClient(QObject *parent):QObject{parent}
         qWarning() << "Default format not supported, trying to use the nearest.";
     }
     input=new QAudioSource(format,this);
-    inputDevice=input->start();
+//    inputDevice=input->start();
 
-    connect(inputDevice,&QIODevice::readyRead,this,&OutputClient::readySend);
+//    connect(inputDevice,&QIODevice::readyRead,this,&OutputClient::readySend);
 }
 
 OutputClient::~OutputClient()
@@ -26,6 +26,14 @@ OutputClient::~OutputClient()
     delete input;
     delete inputDevice;
     delete m_socketWrite;
+}
+
+void OutputClient::connectOutput(QString ip)
+{
+    m_socketWrite = new SocketAudio;//读麦克风写入套接字
+    m_socketWrite->connectToHost(QHostAddress(QString(ip)), 8877);
+    inputDevice=input->start();
+    connect(inputDevice,&QIODevice::readyRead,this,&OutputClient::readySend);
 }
 
 void OutputClient::readySend()

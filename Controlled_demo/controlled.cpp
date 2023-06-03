@@ -15,6 +15,7 @@ Controlled::Controlled(QObject *parent)
     : QTcpServer (parent)
 {
     listen(QHostAddress::Any, 43800);
+
 }
 
 Controlled::~Controlled()
@@ -74,6 +75,22 @@ void Controlled::processEvent(const RemoteEvent &ev)
 
 void Controlled::incomingConnection(qintptr socketDescriptor)
 {
+    QMessageBox msgBox;
+    msgBox.setText("This shares control of your computer's screen, mouse, and keyboard with the connector");
+    msgBox.setInformativeText("Do you want to connect?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    switch (ret) {
+    case QMessageBox::Ok:
+        break;
+    case QMessageBox::Cancel:
+    default:
+        finish();
+        return;
+        break;
+    }
 
 
     qDebug() << "called";

@@ -6,17 +6,24 @@ ApplicationWindow{
     width: 800
     height: 480
     visible: true
-    property bool conflag: true;
-    property bool calflag: true;
+    property bool conflag:cflag;
+    property bool calflag: false;
+
+
     onConflagChanged:{
         if(conflag==true)
             con.images="qrc:/images/icon.png"
         else con.images="qrc:/images/iconDisconnected.png"
     }
     onCalflagChanged:{
-        if(calflag==true)
+        if(calflag==true){
+            controller.discommunication()
             call.images="qrc:/images/call.png"
-        else call.images="qrc:/images/hangUp.png"
+        }
+        else{
+             controller.communication(dialog.ip)
+            call.images="qrc:/images/hangUp.png"
+        }
     }
     MyButton{
         id:con
@@ -24,7 +31,11 @@ ApplicationWindow{
         onMyclicked: {
             if(conflag)
             dialog.open();
-            conflag=!conflag;
+            else {
+                controller.finish()
+                conflag=cflag
+
+            }
         }
         anchors.top:image.bottom
         anchors.left: image.left
@@ -34,7 +45,14 @@ ApplicationWindow{
         id:call
         tip_text: "This button controls the voice"
         onMyclicked: {
-            calflag=!calflag;
+            if(!conflag){
+                if(calflag){
+                    calflag=false
+                }else{
+                    calflag=true;
+                }
+
+            }
         }
         anchors.top:image.bottom
         anchors.right:image.right
@@ -43,15 +61,18 @@ ApplicationWindow{
 
     Dialog{
             id: dialog
+            property alias ip: inputip.text
             title: qsTr("Connect")
             width: (ok.width+cancel.width)*1.5
             height: (ok.width+cancel.width)*1
             anchors.centerIn: parent
             onAccepted: {
-                console.log("aaaa")
+                controller.requestNewConnection(ip)
+                conflag=cflag
             }
             onRejected: {
-                console.log("bbbb")
+                controller.finish()
+                conflag=cflag
             }
 
             TextInput{

@@ -4,9 +4,9 @@
 InputClient::InputClient(QObject *parent) : QObject{parent}
 {
 
-    m_socketRead = new SocketAudio; //读网络写入扬声器
-    m_socketRead->connectToHost(QHostAddress(QString("10.252.47.61")), 8888);
-    connect(m_socketRead,&SocketAudio::readyRead,this,&InputClient::readyReadSlot,Qt::DirectConnection);
+//    m_socketRead = new SocketAudio; //读网络写入扬声器
+//    m_socketRead->connectToHost(QHostAddress(QString("10.252.47.61")), 8888);
+//    connect(m_socketRead,&SocketAudio::readyRead,this,&InputClient::readyReadSlot,Qt::DirectConnection);
 
     QAudioFormat format;
     format.setSampleRate(44100);
@@ -18,7 +18,7 @@ InputClient::InputClient(QObject *parent) : QObject{parent}
         qWarning() << "Default format not supported, trying to use the nearest.";
     }
     output = new QAudioSink(format,this);
-    outputDevice = output->start();
+//    outputDevice = output->start();
 }
 
 InputClient::~InputClient()
@@ -26,6 +26,14 @@ InputClient::~InputClient()
     delete output;
     delete outputDevice;
 
+}
+
+void InputClient::connectInput(QString ip)
+{
+        m_socketRead = new SocketAudio; //读网络写入扬声器
+        m_socketRead->connectToHost(QHostAddress(QString(ip)), 8888);
+        outputDevice = output->start();
+        connect(m_socketRead,&SocketAudio::readyRead,this,&InputClient::readyReadSlot,Qt::DirectConnection);
 }
 
 void InputClient::readyReadSlot()
