@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.15)
 project(demo LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
- find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Multimedia)
 
 qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
 
@@ -23,6 +24,10 @@ target_sources(appdemo
         virtualmouse.h
         virtualmouse.cpp
         remoteevent.h
+        inputserver.cpp
+        inputserver.h
+        outputserver.cpp
+        outputserver.h
     PUBLIC
         
 )
@@ -39,6 +44,7 @@ target_link_libraries(appdemo
     PRIVATE 
         Qt6::Quick
         Qt6::Widgets
+        Qt6::Multimedia
 )
 
 

@@ -7,6 +7,7 @@
 
 class Socket;
 class RemoteEvent;
+
 class Controlled : public QTcpServer
 {
     Q_OBJECT
@@ -24,12 +25,16 @@ signals:
 public slots:
     void processEvent(const RemoteEvent &ev);
 
+
 protected:
     void timerEvent(QTimerEvent *event);
     void incomingConnection(qintptr socketDescriptor);
 
 private:
     Socket *m_controlled = nullptr;
+
+//    OutputServer *outputServer = nullptr;
+//    InputServer *inputServer = nullptr;
     int m_timerId = 0;
 };
 

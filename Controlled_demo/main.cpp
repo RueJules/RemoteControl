@@ -6,7 +6,8 @@
 #include "virtualmouse.h"
 #include"remoteevent.h"
 #include "systemapi.h"
-
+#include "inputserver.h"
+#include "outputserver.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,9 @@ int main(int argc, char *argv[])
     Controlled *controlled = new Controlled;
     VirtualMouse *vmouse = new VirtualMouse;
     SystemApi *sysapi = new SystemApi;
+
+    OutputServer *outputServer = new OutputServer;
+    InputServer *inputServer = new InputServer;
 
     vmouse->install_uinput_mouse_device();
     //vmouse->install_uinput_keyboard_device();
