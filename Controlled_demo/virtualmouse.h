@@ -19,17 +19,22 @@ printf(__VA_ARGS__); \
 
 #define UINPUT_NAME      "/dev/uinput"
 #define VIR_MOUSE_NAME   "DFC Virtual Mouse"
+#define VIR_KETBOARD_NAME   "DFC Virtual Keyboard"
 
 class VirtualMouse
 {
 public:
     VirtualMouse();
+    ~VirtualMouse();
     void install_uinput_mouse_device();
     void uninstall_uinput_mouse_device();
+    //void install_uinput_keyboard_device();
     //QPointF oldPoint;
     static int device_handler;
+    static int keydevice_handler;
 private:
     struct uinput_user_dev vir_mouse;
+    struct uinput_user_dev vir_keyboard;
 
 
 };

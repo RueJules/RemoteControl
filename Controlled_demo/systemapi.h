@@ -11,6 +11,11 @@ public:
     static void mouseRelease(const QPointF &pos);
     static void mouseMove(const QPointF &pos);
     static void mouseEntered(const QPointF &pos);
+    static void keyPressed(int keyval);
+    static void keyReleased(int keyval);
+    static void MouseRightPress(const QPointF &pos);
+    static void MouseRightReleased(const QPointF &pos);
+    //static void keyRealsed(int keyval);
 
     /** System Tools */
     SystemApi();

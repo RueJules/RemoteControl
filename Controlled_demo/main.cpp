@@ -1,16 +1,17 @@
-//#include <QGuiApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QTime>
-#include<QApplication>
+
 #include "controlled.h"
 #include "virtualmouse.h"
 #include"remoteevent.h"
 #include "systemapi.h"
-#include<QMessageBox>
+
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
+
     qRegisterMetaType<DataBlock>("DataBlock");
     qRegisterMetaType<RemoteEvent>("RemoteEvent");
 
@@ -19,11 +20,12 @@ int main(int argc, char *argv[])
     SystemApi *sysapi = new SystemApi;
 
     vmouse->install_uinput_mouse_device();
+    //vmouse->install_uinput_keyboard_device();
     //sleep(3);
     //qDebug() << vmouse->oldPoint.x() << vmouse->oldPoint.y();
     QQmlApplicationEngine engine;
     //engine.rootContext()->setContextProperty("virtualmouse", vmouse);
-    const QUrl url(u"qrc:/Controlled/Main.qml"_qs);
+    const QUrl url(u"qrc:/demo/Main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);

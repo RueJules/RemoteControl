@@ -33,13 +33,16 @@ QDataStream& operator<<(QDataStream &out, const DataBlock &block)
     return out;
 }
 
+
 QDataStream &operator>>(QDataStream &in, RemoteEvent &block)
 {
     qint32 type;
     QPointF position;
-    in >> type >> position;
+    int key;
+    in >> type >> position >> key;
     block.setType(RemoteEvent::EventType(type));
     block.setPosition(position);
+    block.setKey(key);
 
     return in;
 }
@@ -47,7 +50,8 @@ QDataStream &operator>>(QDataStream &in, RemoteEvent &block)
 QDataStream &operator<<(QDataStream &out, const RemoteEvent &block)
 {
     out << qint32(block.type())
-        << block.position();
+        << block.position()
+        <<block.key();
 
     return out;
 }

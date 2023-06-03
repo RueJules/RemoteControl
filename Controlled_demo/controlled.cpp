@@ -9,7 +9,7 @@
 #include <QTime>
 #include <QThread>
 #include <QCursor>
-#include<QMessageBox>
+#include <QMessageBox>
 
 Controlled::Controlled(QObject *parent)
     : QTcpServer (parent)
@@ -33,31 +33,39 @@ void Controlled::processEvent(const RemoteEvent &ev)
     QRectF screenRect = qApp->primaryScreen()->geometry();
     QPointF localPos(ev.position().x() * screenRect.width(),
                      ev.position().y() * screenRect.height());
-    qDebug() << screenRect.width() << screenRect.height();
-     QPoint p3 = QCursor::pos();
+    //qDebug() << screenRect.width() << screenRect.height();
+    //QPoint p3 = QCursor::pos();
 
     switch (ev.type())
     {
-    case RemoteEvent::EventType::Pressed:
+    case RemoteEvent::EventType::MouseLeftPressed:
         SystemApi::mousePress(localPos);
-        qDebug()<<"收到鼠标按下事件";
+       // qDebug()<<"收到鼠标按下事件";
         break;
-    case RemoteEvent::EventType::Released:
+    case RemoteEvent::EventType::MouseLeftReleased:
         SystemApi::mouseRelease(localPos);
-        qDebug()<<"收到鼠标释放事件";
+       // qDebug()<<"收到鼠标释放事件";
         break;
-    case RemoteEvent::EventType::Moved:
-
-
+    case RemoteEvent::EventType::MouseMoved:
         SystemApi::mouseMove(localPos);
-        qDebug()<<"收到鼠标移动事件";
-        qDebug() << p3.x() << p3.y();
+        //qDebug()<<"收到鼠标移动事件";
+        //qDebug() << p3.x() << p3.y();
         break;
-    case RemoteEvent::EventType::Entered:
+    case RemoteEvent::EventType::MouseEntered:
         SystemApi::mouseEntered(localPos);
-        qDebug()<<"收到鼠标进入事件";
+        //qDebug()<<"收到鼠标进入事件";
         break;
     case RemoteEvent::EventType::KeyInput:
+        SystemApi::keyPressed(ev.key());
+        break;
+    case RemoteEvent::EventType::KeyReleased:
+        SystemApi::keyReleased(ev.key());
+        break;
+    case RemoteEvent::EventType::MouseRightPressed:
+        SystemApi::MouseRightPress(localPos);
+        break;
+    case RemoteEvent::EventType::MouseRightReleased:
+        SystemApi::MouseRightReleased(localPos);
         break;
     default:
         break;
@@ -66,7 +74,6 @@ void Controlled::processEvent(const RemoteEvent &ev)
 
 void Controlled::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << "called";
     QMessageBox msgBox;
     msgBox.setText("This shares control of your computer's screen, mouse, and keyboard with the connector");
     msgBox.setInformativeText("Do you want to connect?");
@@ -84,6 +91,7 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
         break;
     }
 
+    qDebug() << "called";
     if (!m_controlled) {
         QThread *thread = new QThread;
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
