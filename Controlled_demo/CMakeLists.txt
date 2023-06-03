@@ -1,65 +1,69 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 
-project(demo LANGUAGES CXX)
+project(Controlled VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Multimedia)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Multimedia)
+qt_standard_project_setup()
 
-qt_standard_project_setup()     #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)  set(CMAKE_AUTORCC ON)
-
-add_executable(appdemo)
-
-target_sources(appdemo
-    PRIVATE
-        main.cpp
-        controlled.cpp
-        controlled.h
-        systemapi.h
-        systemapi.cpp
-        socket.h
-        socket.cpp
-        protocol.h
-        protocol.cpp
-        virtualmouse.h
-        virtualmouse.cpp
-        remoteevent.h
-        inputserver.cpp
-        inputserver.h
-        outputserver.cpp
-        outputserver.h
-    PUBLIC
-        
+set(SOURCES
+    controlled.h
+    controlled.cpp    
+    systemapi.h
+    systemapi.cpp
+    socket.h
+    socket.cpp
+    protocol.h
+    protocol.cpp
+    virtualmouse.h
+    virtualmouse.cpp
+    remoteevent.h
+    inputserver.h
+    inputserver.cpp
+    outputserver.h
+    outputserver.cpp  
+)
+set(QMLFILES
+    Main.qml
 )
 
-qt_add_qml_module(appdemo
-    URI demo
+qt6_add_resources(RESOURCE_FILES
+   resource.qrc
+)
+
+qt_add_executable(appControlled
+    main.cpp
+    ${SOURCES}
+    ${RESOURCE_FILES}
+)
+
+qt_add_qml_module(appControlled
+    URI Controlled
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES
+    ${QMLFILES}
 )
 
-target_compile_features(appdemo PRIVATE cxx_std_20)
-
-target_link_libraries(appdemo
-    PRIVATE 
-        Qt6::Quick
-        Qt6::Widgets
-        Qt6::Multimedia
+set_target_properties(appControlled PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
 )
 
+target_link_libraries(appControlled
+    PRIVATE
+    Qt6::Quick
+    Qt6::Widgets
+    Qt6::Multimedia
+)
 
-
-
-
-
-# set_target_properties(appdemo PROPERTIES
-#     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-#     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-#     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-#     MACOSX_BUNDLE TRUE
-#     WIN32_EXECUTABLE TRUE
-# )
-# 
-# install(TARGETS appdemo
-#     BUNDLE DESTINATION .
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS appControlled
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

@@ -1,17 +1,96 @@
 import QtQuick
 import QtQuick.Controls
-
+import QtQuick.Dialogs
 ApplicationWindow{
     id:root
-
     width: 800
     height: 480
     visible: true
+    property bool conflag: true;
+    property bool calflag: true;
+    onConflagChanged:{
+        if(conflag==true)
+            con.images="qrc:/images/icon.png"
+        else con.images="qrc:/images/iconDisconnected.png"
+    }
+    onCalflagChanged:{
+        if(calflag==true)
+            call.images="qrc:/images/call.png"
+        else call.images="qrc:/images/hangUp.png"
+    }
+    MyButton{
+        id:con
+        tip_text: "This controls the connected button"
+        onMyclicked: {
+            if(conflag)
+            dialog.open();
+            conflag=!conflag;
+        }
+        anchors.top:image.bottom
+        anchors.left: image.left
+        images:"qrc:/images/icon.png"
+    }
+    MyButton{
+        id:call
+        tip_text: "This button controls the voice"
+        onMyclicked: {
+            calflag=!calflag;
+        }
+        anchors.top:image.bottom
+        anchors.right:image.right
+        images:"qrc:/images/call.png"
+    }
+
+    Dialog{
+            id: dialog
+            title: qsTr("Connect")
+            width: (ok.width+cancel.width)*1.5
+            height: (ok.width+cancel.width)*1
+            anchors.centerIn: parent
+            onAccepted: {
+                console.log("aaaa")
+            }
+            onRejected: {
+                console.log("bbbb")
+            }
+
+            TextInput{
+                id:inputip
+                focus: true
+                visible: true
+                width: (ok.width+cancel.width)
+                anchors.centerIn: parent
+                height: con.height
+
+            }
+            MyButton{
+                id:ok
+                width: 75
+                height: 25
+                text: "ok"
+                anchors.top: inputip.bottom
+                anchors.left: inputip.left
+                onMyclicked: {
+                    dialog.accept()
+                }
+            }
+            MyButton{
+                id:cancel
+                width: 75
+                height: 25
+                text:"cancel"
+                anchors.top: inputip.bottom
+                anchors.right: inputip.right
+                onMyclicked: {
+                    dialog.reject()
+                }
+            }
+        }
 
     Image {
         id: image
         width: parent.width
-        height: parent.height
+        height: parent.height-con.height
         sourceSize: Qt.size(image.width,image.height)
         cache: false//指定是否应缓存图像。默认值为true。在处理大型图像时，将缓存设置为false非常有用，以确保它们不会以牺牲小型“ui元素”图像为代价进行缓存。什么意思
 
@@ -30,12 +109,12 @@ ApplicationWindow{
         }
     }
     MouseArea {
-
         id: controllerArea
         hoverEnabled:true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        anchors.fill: parent
-
+       // anchors.fill: parent
+        width: parent.width
+        height: parent.height-con.height
         property int count:0
         onEntered: {
             let ratio = Qt.point(mouseX / root.width, mouseY/ root.height);
@@ -64,9 +143,9 @@ ApplicationWindow{
         }
     }
     Item{
-        id:keyaa
-        anchors.fill: parent
-
+        //anchors.fill: parent
+        width: parent.width
+        height: parent.height-con.height
         focus:true
 
         Keys.onPressed :(event)=>{

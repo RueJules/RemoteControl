@@ -1,10 +1,19 @@
 import QtQuick
 import QtQuick.Controls
-
+import QtQuick.Dialogs
 ApplicationWindow {
     visible: true
     Button{
         id:btn
+    }
+    MessageDialog {
+        visible: true
+        text: "The document has been modified."
+        informativeText: "Do you want to save your changes?"
+        buttons: MessageDialog.Ok | MessageDialog.Cancel
+
+        //onAccepted:
+        //onReject:
     }
 
     /*Item {
