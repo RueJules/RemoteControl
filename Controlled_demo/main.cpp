@@ -2,7 +2,7 @@
 #include<QApplication>
 #include <QQmlApplicationEngine>
 #include <QTime>
-
+#include <QQmlContext>
 #include "controlled.h"
 #include "virtualmouse.h"
 #include"remoteevent.h"
@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
     //sleep(3);
     //qDebug() << vmouse->oldPoint.x() << vmouse->oldPoint.y();
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("controlled", controlled);
     //engine.rootContext()->setContextProperty("virtualmouse", vmouse);
     const QUrl url(u"qrc:/Controlled/Main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,

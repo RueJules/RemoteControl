@@ -12,9 +12,23 @@ class Controller : public QObject
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE bool flag=true;
+
+    Q_PROPERTY(bool flag READ flag WRITE setFlag NOTIFY flagChanged);
+    bool flag();
+    void setFlag(const bool & flag);
+
+    Q_PROPERTY(bool cflag READ cflag WRITE setCflag NOTIFY cflagChanged);
+    bool cflag();
+    void setCflag(const bool & flag);
+
+    Q_PROPERTY(bool sflag READ sflag WRITE setSflag NOTIFY sflagChanged)
+    bool sflag();
+    void setSflag(const bool & flag);
+
     Q_INVOKABLE void communication(QString ip);
     Q_INVOKABLE void discommunication();
+
+
     explicit Controller(QObject *parent = nullptr);//explicit禁止隐式类型
 
     ImageProvider* getImageProvider() { return m_provider; }
@@ -39,14 +53,26 @@ public slots:
 //    void Communication();
 
     void CancelCom();
+
+
     void changeflag();
+    void changecflag();
+    void changesflag();
+
+
 signals:
     void connected();
     void sin_discommunication();
     void disconnected();
     void needUpdate();
-
+    void flagChanged();
+    void cflagChanged();
+    void sflagChanged();
 private:
+
+    bool m_flag=true;
+    bool c_flag=true;
+    bool s_flag=true;
 
     Socket *m_socket;//这是跟服务器连接的套接字
     ImageProvider *m_provider;

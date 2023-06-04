@@ -1,7 +1,7 @@
 #include "controller.h"
 #include "imageprovider.h"
 #include "socket.h"
-#include "keythread.h"
+#include<QThread>
 #include <QGuiApplication>
 #include <QHostAddress>
 #include <QInputDialog>
@@ -18,10 +18,6 @@ Controller::Controller(QObject *parent)
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     m_socket->moveToThread(thread);//刚创建就交给子进程？？那主进程干什么
     thread->start();
-//    KeyThread *keythread = new KeyThread(this);
-//    connect(keythread,&KeyThread::keyPressed,this ,&Controller::keyPressed);
-//    connect(keythread,&KeyThread::keyReleased,this ,&Controller::keyReleased);
-//    keythread->start();
 }
 //连接服务器
 
@@ -60,11 +56,55 @@ void Controller::readScreenData(const QByteArray &screenData)
      emit needUpdate();
 }
 
+bool Controller::flag()
+{
+     return m_flag;
+}
+
+void Controller::setFlag(const bool &flag)
+{
+     if(m_flag==flag)
+         return;
+     m_flag=flag;
+     emit flagChanged();
+}
+
+bool Controller::cflag()
+{
+     return c_flag;
+}
+
+void Controller::setCflag(const bool &flag)
+{
+     if(c_flag==flag)
+         return;
+     c_flag=flag;
+     emit cflagChanged();
+}
+
+bool Controller::sflag()
+{
+     return s_flag;
+}
+
+void Controller::setSflag(const bool &flag)
+{
+     if(s_flag==flag)
+         return;
+     s_flag=flag;
+     emit cflagChanged();
+}
+
+
 void Controller::communication(QString ip)
 {
+     setCflag(true);
+     setSflag(true);
 
-     input=new InputClient();
+     input=new InputClient();//cflag
      input->connectInput(ip);
+     connect(input->m_socketRead,&SocketAudio::connected,this,&Controller::changecflag);
+     connect(input->m_socketRead,&SocketAudio::disconnected,this,&Controller::changecflag);
      QThread *thread1 = new QThread;
      connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
      connect(this, &Controller::sin_discommunication, thread1, &QThread::quit);
@@ -73,6 +113,8 @@ void Controller::communication(QString ip)
 
      output=new OutputClient();
      output->connectOutput(ip);
+     connect(output->m_socketWrite,&SocketAudio::connected,this,&Controller::changesflag);
+     connect(output->m_socketWrite,&SocketAudio::disconnected,this,&Controller::changesflag);
      QThread *thread2 = new QThread;
      connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
      connect(this, &Controller::sin_discommunication, thread2, &QThread::quit);
@@ -82,8 +124,9 @@ void Controller::communication(QString ip)
 
 void Controller::discommunication()
 {
+     setCflag(true);
+     setSflag(true);
      emit sin_discommunication();
-     qDebug()<<"*****************";
 }
 
 //void Controller::Communication()
@@ -110,7 +153,20 @@ void Controller::CancelCom()
 
 void Controller::changeflag()
 {
-     flag=!flag;
+     setFlag(!flag());
+     if(!flag()){
+         discommunication();
+     }
+}
+
+void Controller::changecflag()
+{
+     setCflag(!cflag());
+}
+
+void Controller::changesflag()
+{
+     setSflag(!sflag());
 }
 
 //鼠标事件

@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
     //controller->Communication();
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("controller", controller);
-    engine.rootContext()->setContextProperty("cflag", controller->flag);
     engine.addImageProvider(QLatin1String("screen"), controller->getImageProvider());
     engine.load(QUrl(QStringLiteral("qrc:/Controller/Main.qml")));
     if (engine.rootObjects().isEmpty())

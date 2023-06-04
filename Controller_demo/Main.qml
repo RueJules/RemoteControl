@@ -5,23 +5,16 @@ ApplicationWindow{
     id:root
     width: 800
     height: 480
-    visible: true
-    property bool conflag:cflag;
-    property bool calflag: false;
+    visible:true
 
-
-    onConflagChanged:{
-        if(conflag==true)
-            con.images="qrc:/images/icon.png"
-        else con.images="qrc:/images/iconDisconnected.png"
-    }
+    property bool calflag: controller.cflag && controller.sflag
     onCalflagChanged:{
         if(calflag==true){
-            controller.discommunication()
+            call.tip_text="This button controls the voice"
             call.images="qrc:/images/call.png"
         }
         else{
-             controller.communication(dialog.ip)
+            call.tip_text="This button discontrols the voice"
             call.images="qrc:/images/hangUp.png"
         }
     }
@@ -29,12 +22,10 @@ ApplicationWindow{
         id:con
         tip_text: "This controls the connected button"
         onMyclicked: {
-            if(conflag)
+            if(controller.flag)
             dialog.open();
             else {
                 controller.finish()
-                conflag=cflag
-
             }
         }
         anchors.top:image.bottom
@@ -45,13 +36,12 @@ ApplicationWindow{
         id:call
         tip_text: "This button controls the voice"
         onMyclicked: {
-            if(!conflag){
+            if(!controller.flag){
                 if(calflag){
-                    calflag=false
+                    controller.communication(dialog.ip)
                 }else{
-                    calflag=true;
+                   controller.discommunication();
                 }
-
             }
         }
         anchors.top:image.bottom
@@ -59,6 +49,26 @@ ApplicationWindow{
         images:"qrc:/images/call.png"
     }
 
+
+    Connections {
+        target: controller
+        function onFlagChanged(){
+            if(controller.flag){
+                con.tip_text= "This controls the connected button"
+                con.images="qrc:/images/icon.png"
+            }else{
+                con.tip_text= "This discontrols the connected button"
+                con.images="qrc:/images/iconDisconnected.png"
+            }
+
+        }
+        function onCflagChanged(){
+            calflag=controller.cflag && controller.sflag
+        }
+        function onSflagChanged(){
+            calflag=controller.cflag && controller.sflag
+        }
+    }
     Dialog{
             id: dialog
             property alias ip: inputip.text
@@ -68,11 +78,9 @@ ApplicationWindow{
             anchors.centerIn: parent
             onAccepted: {
                 controller.requestNewConnection(ip)
-                conflag=cflag
             }
             onRejected: {
-                controller.finish()
-                conflag=cflag
+                controller.finish()            
             }
 
             TextInput{

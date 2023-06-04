@@ -28,10 +28,11 @@ set(SOURCES
 )
 set(QMLFILES
     Main.qml
+    MyButton.qml
 )
 
 qt6_add_resources(RESOURCE_FILES
-   resource.qrc
+   
 )
 
 qt_add_executable(appControlled

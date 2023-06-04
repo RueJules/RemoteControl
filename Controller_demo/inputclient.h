@@ -13,13 +13,14 @@ public:
     InputClient(QObject *parent = nullptr);
     ~InputClient();
     void connectInput(QString ip);
-
+    SocketAudio *m_socketRead;
 public slots:
     void readyReadSlot();
 private:
     QAudioSink *output;
     QIODevice *outputDevice;
-    SocketAudio *m_socketRead;
+//    SocketAudio *m_socketRead;
+
 };
 
 #endif // INPUTCLIENT_H

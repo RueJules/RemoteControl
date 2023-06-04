@@ -13,6 +13,11 @@ class Controlled : public QTcpServer
     Q_OBJECT
 
 public:
+    Q_PROPERTY(bool flag READ flag WRITE setFlag NOTIFY flagChanged)
+    bool flag();
+    void setFlag(const bool& flag);
+
+
     explicit Controlled(QObject *parent = nullptr);
     ~Controlled();
 
@@ -21,6 +26,7 @@ public:
 signals:
     void connected();
     void disconnected();
+    void flagChanged();
 
 public slots:
     void processEvent(const RemoteEvent &ev);
@@ -36,6 +42,7 @@ private:
 //    OutputServer *outputServer = nullptr;
 //    InputServer *inputServer = nullptr;
     int m_timerId = 0;
+    bool connectstate=false;
 };
 
 #endif // CONTROLLED_H

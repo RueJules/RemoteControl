@@ -10,6 +10,18 @@
 #include <QThread>
 #include <QCursor>
 #include <QMessageBox>
+bool Controlled::flag()
+{
+    return connectstate;
+}
+
+void Controlled::setFlag(const bool &flag)
+{
+    if(connectstate==flag)
+        return;
+    connectstate=flag;
+    emit flagChanged();
+}
 
 Controlled::Controlled(QObject *parent)
     : QTcpServer (parent)
@@ -84,14 +96,15 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
 
     switch (ret) {
     case QMessageBox::Ok:
+
         break;
     case QMessageBox::Cancel:
     default:
+        setFlag(false);
         finish();
         return;
         break;
     }
-
 
     qDebug() << "called";
     if (!m_controlled) {
@@ -102,6 +115,7 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
             switch (socketState)
             {
             case QAbstractSocket::ConnectedState:
+                 setFlag(true);
                 emit connected();
                 break;
             default:
@@ -114,6 +128,7 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
             socket->deleteLater();
             killTimer(m_timerId);
             m_timerId = 0;
+            setFlag(false);
             emit disconnected();
         });
         connect(m_controlled, &Socket::hasEventData, this, [this](const RemoteEvent &event) {
