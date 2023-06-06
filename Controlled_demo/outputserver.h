@@ -6,7 +6,7 @@
 #include <QObject>
 #include "socket.h"
 
-class OutputServer:public QTcpServer//监听是否有数据输入（客户端有没有传过来）有就用扬声器播放
+class OutputServer:public QTcpServer//监听是否有数据输入（客户端有没有传过来）有就写入扬声器，用扬声器播放
 {
     Q_OBJECT
 public:

@@ -24,7 +24,7 @@ int VirtualMouse::device_handler = -1;
 
 int VirtualMouse::keydevice_handler = -1;
 
-
+//注册一个设备，这里本来打算为键盘和鼠标各注册一个（所以命名为mouse），其实可以只注册一个，使用同一个句柄
 void VirtualMouse::install_uinput_mouse_device()
 {
     if (device_handler > 0)
@@ -40,6 +40,7 @@ void VirtualMouse::install_uinput_mouse_device()
         device_handler = -1;
         //return device_handler;
     }
+
     //setup our uinput device of virtual mouse
     memset(&vir_mouse, 0, sizeof(struct uinput_user_dev));
     strncpy(vir_mouse.name, VIR_MOUSE_NAME, UINPUT_MAX_NAME_SIZE);
@@ -50,7 +51,7 @@ void VirtualMouse::install_uinput_mouse_device()
     ioctl(device_handler, UI_SET_EVBIT, EV_KEY);
     for (int i = 0; i < 256; i++)
     {
-        ioctl(device_handler, UI_SET_KEYBIT, i);
+        ioctl(device_handler, UI_SET_KEYBIT, i);  //setup keyboard event
     }
 
     //setup mouse coordinate event

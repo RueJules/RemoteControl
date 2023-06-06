@@ -5,6 +5,8 @@
 #include <QPointF>
 #include <utility>
 
+
+//远程事件类
 class RemoteEvent
 {
 public:
@@ -51,9 +53,9 @@ public:
     int size() { return sizeof(m_type) + sizeof(m_position) + sizeof(int); }
 
 private:
-    EventType m_type = EventType::NoType;
-    QPointF m_position;
-    int m_key;
+    EventType m_type = EventType::NoType;  //事件类型
+    QPointF m_position;  //事件坐标
+    int m_key;  //键盘事件传输的键值
 };
 
 #endif // REMOTEEVENT_H

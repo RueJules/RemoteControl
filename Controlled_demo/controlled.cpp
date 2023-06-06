@@ -10,12 +10,12 @@
 #include <QThread>
 #include <QCursor>
 #include <QMessageBox>
-bool Controlled::flag()
+bool Controlled::flag() //连接状态返回函数
 {
     return connectstate;
 }
 
-void Controlled::setFlag(const bool &flag)
+void Controlled::setFlag(const bool &flag)  //当套接字状态发生改变时，设置当前的套接字状态
 {
     if(connectstate==flag)
         return;
@@ -26,7 +26,7 @@ void Controlled::setFlag(const bool &flag)
 Controlled::Controlled(QObject *parent)
     : QTcpServer (parent)
 {
-    listen(QHostAddress::Any, 43800);
+    listen(QHostAddress::Any, 43800); //监听
 
 }
 
@@ -38,18 +38,15 @@ Controlled::~Controlled()
 void Controlled::finish()
 {
     if (m_controlled)
-        QMetaObject::invokeMethod(m_controlled, "abort");
+        QMetaObject::invokeMethod(m_controlled, "abort"); //Aborts the current connection and resets the socket.this function immediately closes the socket, discarding any pending data in the write buffer.
 }
 
 void Controlled::processEvent(const RemoteEvent &ev)
 {
     QRectF screenRect = qApp->primaryScreen()->geometry();
     QPointF localPos(ev.position().x() * screenRect.width(),
-                     ev.position().y() * screenRect.height());
-    //qDebug() << screenRect.width() << screenRect.height();
-    //QPoint p3 = QCursor::pos();
-
-    switch (ev.type())
+                     ev.position().y() * screenRect.height());//通过事件点在控制端上应用窗口内的占比重新计算应该显示在被控制端的坐标
+    switch (ev.type())  //根据不听的事件类型使用不同的处理函数
     {
     case RemoteEvent::EventType::MouseLeftPressed:
         SystemApi::mousePress(localPos);
@@ -87,7 +84,7 @@ void Controlled::processEvent(const RemoteEvent &ev)
 
 void Controlled::incomingConnection(qintptr socketDescriptor)
 {
-    QMessageBox msgBox;
+    QMessageBox msgBox;  //消息盒子，由被控制端决定时会接受这次控制
     msgBox.setText("This shares control of your computer's screen, mouse, and keyboard with the connector");
     msgBox.setInformativeText("Do you want to connect?");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
@@ -107,10 +104,14 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
     }
 
     qDebug() << "called";
-    if (!m_controlled) {
-        QThread *thread = new QThread;
+    if (!m_controlled) {  //没有生成连接套接字
+
+        QThread *thread = new QThread; //套接字线程
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        m_controlled = new Socket;
+
+        m_controlled = new Socket;  //生成连接套接字
+
+        //完成套接字一些可能的信号与槽的连接
         connect(m_controlled, &Socket::stateChanged, this, [this](QAbstractSocket::SocketState socketState) {
             switch (socketState)
             {
@@ -131,13 +132,16 @@ void Controlled::incomingConnection(qintptr socketDescriptor)
             setFlag(false);
             emit disconnected();
         });
-        connect(m_controlled, &Socket::hasEventData, this, [this](const RemoteEvent &event) {
+        connect(m_controlled, &Socket::hasEventData, this, [this](const RemoteEvent &event) { //对于被控制端在这个套接字中只会接收到事件数据
             processEvent(event);
         });
+
+        //为连接套接字设置套接字描述符
         m_controlled->setSocketDescriptor(socketDescriptor);
         m_controlled->moveToThread(thread);
         thread->start();
 
+        //启动计时器，1秒做一次
         if (!m_timerId)
             m_timerId = startTimer(std::chrono::milliseconds(1000));
     }
@@ -147,12 +151,13 @@ void Controlled::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
     if (m_controlled) {
-        QBuffer buffer;
+        QBuffer buffer;  //屏幕事件缓冲区
         buffer.open(QIODevice::WriteOnly);
         QTime time = QTime::currentTime();
         QPixmap pixmap = SystemApi::grabScreen();
         //qDebug() << time.msecsTo(QTime::currentTime());
-        pixmap.save(&buffer, "jpg", 35);
+        pixmap.save(&buffer, "jpg", 35); //This function writes a QPixmap to the given device using the specified image file format and quality factor.
+
         BlockHeader header = { SCREEN_TYPE, qint32(buffer.size()) };
         DataBlock data = { header, buffer.data() };
 

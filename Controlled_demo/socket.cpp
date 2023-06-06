@@ -49,9 +49,9 @@ void Socket::writeToSocket(const RemoteEvent &event)
     flush();
 }
 
-void Socket::processRecvBlock()   //如果图片处理的过程加快，双方的同步可能效果更好
+void Socket::processRecvBlock()
 {
-    if (m_recvHeader.isEmpty() && m_recvData.size() > 0) {
+    if (m_recvHeader.isEmpty() && m_recvData.size() > 0) { //先写数据块的头
         BlockHeader header;
         QDataStream in(&m_recvData, QIODevice::ReadOnly);
         in.setVersion(QDataStream::Qt_5_12);
@@ -61,18 +61,20 @@ void Socket::processRecvBlock()   //如果图片处理的过程加快，双方�
             return;
 
         m_recvHeader = header;
-        m_recvData.remove(0, header.size());      
+        m_recvData.remove(0, header.size());      //接收到的数据中移除已经记录的头
     }
 
-    if (m_recvData.size() < m_recvHeader.dataSize)
+    if (m_recvData.size() < m_recvHeader.dataSize) //收到的数据大小小于头中记录的大小，则放弃这一次可能不完整的数据
         return;
 
     DataBlock block;
-    block.header = m_recvHeader;
-    block.data = m_recvData.left(m_recvHeader.dataSize);
-    m_recvData = m_recvData.mid(m_recvHeader.dataSize);
-    m_recvHeader.clear();//清空这个头，以便写入下一次头
+    block.header = m_recvHeader; //记录的数据头写入数据块
+    block.data = m_recvData.left(m_recvHeader.dataSize); //Returns a byte array that contains the first len bytes of this byte array.从左往右数最先包含这么多大小的数据
+    m_recvData = m_recvData.mid(m_recvHeader.dataSize); //Returns a byte array containing len bytes from this byte array, starting at position pos.
+    m_recvHeader.clear();//清空这个头，以便写入下一次数据块
 
+
+    //开始识别数据类型，分类处理数据
     if (block.header.type == SCREEN_TYPE) {
         emit hasScreenData(block.data);
     } else if (block.header.type == EVENT_TYPE) {

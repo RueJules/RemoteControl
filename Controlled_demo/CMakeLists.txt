@@ -28,7 +28,7 @@ set(SOURCES
 )
 set(QMLFILES
     Main.qml
-    MyButton.qml
+   # MyButton.qml
 )
 
 qt6_add_resources(RESOURCE_FILES

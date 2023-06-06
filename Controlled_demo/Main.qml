@@ -6,7 +6,7 @@ ApplicationWindow {
     Connections {
         target: controlled
         function onFlagChanged(){
-            if(controlled.flag)
+            if(!controlled.flag)
                 text.text="Wait for the connection"
             else
                 text.text="The connection was successful"

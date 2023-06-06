@@ -9,7 +9,7 @@
 #define EVENT_TYPE  0x02
 #define SCREEN_TYPE 0x03
 
-struct BlockHeader
+struct BlockHeader //传输数据块的头结构
 {
     qint8 type;
     qint32 dataSize;
@@ -30,14 +30,15 @@ struct BlockHeader
     }
 };
 
-struct DataBlock
+struct DataBlock  //传输的数据块结构
 {
-    BlockHeader header;
-    QByteArray data;
+    BlockHeader header; //头
+    QByteArray data;//数据
 };
 
 class RemoteEvent;
 
+//重载操作符实现对数据和事件的读写
 extern QDataStream& operator>>(QDataStream &in, BlockHeader &header);
 extern QDataStream& operator<<(QDataStream &out, const BlockHeader &header);
 extern QDataStream& operator>>(QDataStream &in, DataBlock &block);

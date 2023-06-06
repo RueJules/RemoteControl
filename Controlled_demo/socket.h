@@ -5,7 +5,8 @@
 #include <QTcpSocket>
 
 class RemoteEvent;
-class Socket : public QTcpSocket
+
+class Socket : public QTcpSocket  //自定义套接字
 {
     Q_OBJECT
 public:
@@ -17,9 +18,10 @@ public:
     Q_INVOKABLE void writeToSocket(const QByteArray &block) { write(block); }
     Q_INVOKABLE void writeToSocket(const DataBlock &block);
     Q_INVOKABLE void writeToSocket(const RemoteEvent &event);
-    Q_INVOKABLE QByteArray readAllSocket(){return QTcpSocket::readAll();}
+    //Q_INVOKABLE QByteArray readAllSocket(){return QTcpSocket::readAll();}
 
 signals:
+    //接收到不同的事件后需要发送通知给客
     void hasScreenData(const QByteArray &screenData);
     void hasEventData(const RemoteEvent &event);
 
