@@ -25,17 +25,14 @@ public:
     bool sflag();
     void setSflag(const bool & flag);
 
+    explicit Controller(QObject *parent = nullptr);//explicit禁止隐式类型
+    ImageProvider* getImageProvider() { return m_provider; }
+    //响应前端按钮
+    Q_INVOKABLE void requestNewConnection(QString ip);
+    Q_INVOKABLE void finish();
     Q_INVOKABLE void communication(QString ip);
     Q_INVOKABLE void discommunication();
-
-
-    explicit Controller(QObject *parent = nullptr);//explicit禁止隐式类型
-
-    ImageProvider* getImageProvider() { return m_provider; }
-
-    Q_INVOKABLE void finish();
-//    Q_INVOKABLE void requestNewConnection();
-    Q_INVOKABLE void requestNewConnection(QString ip);
+    //鼠标键盘事件
     Q_INVOKABLE void leftMousePressed(const QPointF &position);
     Q_INVOKABLE void leftMouseReleased(const QPointF &position);
     Q_INVOKABLE void rightMousePressed(const QPointF &position);
@@ -44,26 +41,21 @@ public:
     Q_INVOKABLE void mouseEntered(const QPointF &position);
     Q_INVOKABLE void keyPressed(const int &key);
     Q_INVOKABLE void keyReleased(const int &key);
-
+    //发送事件
     inline void sendRemoteEvent(RemoteEvent::EventType type, const QPointF &position);
     inline void sendRemoteEvent(RemoteEvent::EventType type, const int &key);
 
 public slots:
     void readScreenData(const QByteArray &screenData);
-//    void Communication();
-
-    void CancelCom();
-
 
     void changeflag();
     void changecflag();
     void changesflag();
 
-
 signals:
     void connected();
-    void sin_discommunication();
     void disconnected();
+    void sin_discommunication();
     void needUpdate();
     void flagChanged();
     void cflagChanged();

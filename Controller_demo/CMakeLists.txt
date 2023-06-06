@@ -20,8 +20,6 @@ set(SOURCES
     socket.h
     socket.cpp
     remoteevent.h
-    keythread.h
-    keythread.cpp
     inputclient.h
     inputclient.cpp
     outputclient.h

@@ -19,8 +19,6 @@ public slots:
 private:
     QAudioSink *output;
     QIODevice *outputDevice;
-//    SocketAudio *m_socketRead;
-
 };
 
 #endif // INPUTCLIENT_H

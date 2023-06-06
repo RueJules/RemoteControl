@@ -23,14 +23,16 @@ ApplicationWindow{
         tip_text: "This controls the connected button"
         onMyclicked: {
             if(controller.flag)
-            dialog.open();
+
+                dialog.open();
+
             else {
                 controller.finish()
             }
         }
         anchors.top:image.bottom
         anchors.left: image.left
-        images:"qrc:/images/icon.png"
+        images:"qrc:/images/heart.png"
     }
     MyButton{
         id:call
@@ -55,10 +57,15 @@ ApplicationWindow{
         function onFlagChanged(){
             if(controller.flag){
                 con.tip_text= "This controls the connected button"
-                con.images="qrc:/images/icon.png"
+                con.images="qrc:/images/heart.png"
+                controllerArea.enabled=false;
+                controllerArea.hoverEnabled=false;
+                image.source="qrc:/images/background.jpg"
             }else{
                 con.tip_text= "This discontrols the connected button"
-                con.images="qrc:/images/iconDisconnected.png"
+                con.images="qrc:/images/heartbreak.png"
+                controllerArea.enabled=true;
+                controllerArea.hoverEnabled=true;
             }
 
         }
@@ -70,59 +77,59 @@ ApplicationWindow{
         }
     }
     Dialog{
-            id: dialog
-            property alias ip: inputip.text
-            title: qsTr("Connect")
-            width: (ok.width+cancel.width)*1.5
-            height: (ok.width+cancel.width)*1
+        id: dialog
+        property alias ip: inputip.text
+        title: qsTr("Connect")
+        width: (ok.width+cancel.width)*1.5
+        height: (ok.width+cancel.width)*1
+        anchors.centerIn: parent
+        onAccepted: {
+            controller.requestNewConnection(ip)
+        }
+        onRejected: {
+            controller.finish()
+        }
+        TextInput{
+            id:inputip
+            focus: true
+            text:"10.252.132.39"
+            visible: true
+            width: 250
+            horizontalAlignment: Text.AlignHCenter//水平居中
             anchors.centerIn: parent
-            onAccepted: {
-                controller.requestNewConnection(ip)
-            }
-            onRejected: {
-                controller.finish()            
-            }
+            height: con.height
+        }
+        MyButton{
+           id:ok
+            width: 90
+            height: 25
+            text: "ok"
 
-            TextInput{
-                id:inputip
-                focus: true
-                visible: true
-                width: (ok.width+cancel.width)
-                anchors.centerIn: parent
-                height: con.height
-
-            }
-            MyButton{
-                id:ok
-                width: 75
-                height: 25
-                text: "ok"
-                anchors.top: inputip.bottom
-                anchors.left: inputip.left
-                onMyclicked: {
-                    dialog.accept()
-                }
-            }
-            MyButton{
-                id:cancel
-                width: 75
-                height: 25
-                text:"cancel"
-                anchors.top: inputip.bottom
-                anchors.right: inputip.right
-                onMyclicked: {
-                    dialog.reject()
-                }
+            anchors.top: inputip.bottom
+            anchors.left: inputip.left
+            onMyclicked: {
+                dialog.accept()
             }
         }
-
+        MyButton{
+            id:cancel
+            width: 90
+            height: 25
+            text:"cancel"
+            anchors.top: inputip.bottom
+            anchors.right: inputip.right
+            onMyclicked: {
+                dialog.reject()
+            }
+        }
+    }
     Image {
         id: image
         width: parent.width
         height: parent.height-con.height
         sourceSize: Qt.size(image.width,image.height)
-        cache: false//指定是否应缓存图像。默认值为true。在处理大型图像时，将缓存设置为false非常有用，以确保它们不会以牺牲小型“ui元素”图像为代价进行缓存。什么意思
-
+        cache: false//指定是否应缓存图像。默认值为true。在处理大型图像时，将缓存设置为false非常有用，以确保它们不会以牺牲小型“ui元素”图像为代价进行缓存
+        source:"qrc:/images/background.jpg"
         Connections {
             target: controller
             function onNeedUpdate() {
@@ -130,24 +137,17 @@ ApplicationWindow{
             }
         }
     }
-
-    TapHandler{
-        onTapped: {
-            let ratio = Qt.point(point.x / root.width,point.y/ root.height);
-            controller.mousePressed(ratio);//为什么能直接用controller的
-        }
-    }
     MouseArea {
+        //鼠标区域
         id: controllerArea
-        hoverEnabled:true
+
+        hoverEnabled:false
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-       // anchors.fill: parent
         width: parent.width
         height: parent.height-con.height
-        property int count:0
         onEntered: {
             let ratio = Qt.point(mouseX / root.width, mouseY/ root.height);
-            controller.mouseEntered(ratio);//为什么能直接用controller的
+            controller.mouseEntered(ratio);
             console.log(ratio)
         }
         onPressed:(event)=> {
@@ -156,7 +156,6 @@ ApplicationWindow{
                 controller.leftMousePressed(ratio);
             if(event.button==Qt.RightButton)
                 controller.rightMousePressed(ratio);
-
         }
         onReleased:(event)=> {
             let ratio = Qt.point(mouseX / root.width, mouseY/ root.height);
@@ -172,7 +171,7 @@ ApplicationWindow{
         }
     }
     Item{
-        //anchors.fill: parent
+        //键盘区域
         width: parent.width
         height: parent.height-con.height
         focus:true
@@ -308,7 +307,7 @@ ApplicationWindow{
                 break;
             case Qt.Key_AsciiTilde:
                 controller.keyPressed(41)
-                    break;
+                break;
             case Qt.Key_Shift:
                 controller.keyPressed(42)
                 break;

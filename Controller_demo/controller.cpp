@@ -20,82 +20,17 @@ Controller::Controller(QObject *parent)
     thread->start();
 }
 //连接服务器
-
-//void Controller::requestNewConnection()
-//{
-
-//    QHostAddress hostAddress(QString{"10.252.47.61"});
-//    QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
-//    //指定服务器的ip和端口
-//}
-
 void Controller::requestNewConnection(QString ip)
 {
-
     QHostAddress hostAddress(QString{ip});
     QMetaObject::invokeMethod(m_socket, "connectHost", Q_ARG(QHostAddress, hostAddress), Q_ARG(quint16, 43800));
-
     //指定服务器的ip和端口
 }
-
 //断开连接
 void Controller::finish()
 {
-     QMetaObject::invokeMethod(m_socket, "abort");
-
+    QMetaObject::invokeMethod(m_socket, "abort");
 }
-
-
-
-//读图片数据
-void Controller::readScreenData(const QByteArray &screenData)
-{
-     QPixmap pixmap;
-     pixmap.loadFromData(screenData);
-     m_provider->setPixmap(pixmap);
-     emit needUpdate();
-}
-
-bool Controller::flag()
-{
-     return m_flag;
-}
-
-void Controller::setFlag(const bool &flag)
-{
-     if(m_flag==flag)
-         return;
-     m_flag=flag;
-     emit flagChanged();
-}
-
-bool Controller::cflag()
-{
-     return c_flag;
-}
-
-void Controller::setCflag(const bool &flag)
-{
-     if(c_flag==flag)
-         return;
-     c_flag=flag;
-     emit cflagChanged();
-}
-
-bool Controller::sflag()
-{
-     return s_flag;
-}
-
-void Controller::setSflag(const bool &flag)
-{
-     if(s_flag==flag)
-         return;
-     s_flag=flag;
-     emit cflagChanged();
-}
-
-
 void Controller::communication(QString ip)
 {
      setCflag(true);
@@ -107,8 +42,7 @@ void Controller::communication(QString ip)
      connect(input->m_socketRead,&SocketAudio::disconnected,this,&Controller::changecflag);
      QThread *thread1 = new QThread;
      connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
-     connect(this, &Controller::sin_discommunication, thread1, &QThread::quit);
-     input->moveToThread(thread1);//刚创建就交给子进程？？那主进程干什么
+     input->moveToThread(thread1);
      thread1->start();
 
      output=new OutputClient();
@@ -117,58 +51,17 @@ void Controller::communication(QString ip)
      connect(output->m_socketWrite,&SocketAudio::disconnected,this,&Controller::changesflag);
      QThread *thread2 = new QThread;
      connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
-     connect(this, &Controller::sin_discommunication, thread2, &QThread::quit);
-     output->moveToThread(thread2);//刚创建就交给子进程？？那主进程干什么
+     output->moveToThread(thread2);
      thread2->start();
 }
 
 void Controller::discommunication()
 {
+     input->m_socketRead->abort();
+     output->m_socketWrite->abort();
      setCflag(true);
      setSflag(true);
-     emit sin_discommunication();
 }
-
-//void Controller::Communication()
-//{
-//     input=new InputClient();
-//     QThread *thread1 = new QThread;
-//     connect(thread1, &QThread::finished, thread1, &QThread::deleteLater);
-//     input->moveToThread(thread1);//刚创建就交给子进程？？那主进程干什么
-//     thread1->start();
-
-//     output=new OutputClient();
-//     QThread *thread2 = new QThread;
-//     connect(thread2, &QThread::finished, thread2, &QThread::deleteLater);
-//     output->moveToThread(thread2);//刚创建就交给子进程？？那主进程干什么
-//     thread2->start();
-
-//}
-
-void Controller::CancelCom()
-{
-     delete input;
-     delete output;
-}
-
-void Controller::changeflag()
-{
-     setFlag(!flag());
-     if(!flag()){
-         discommunication();
-     }
-}
-
-void Controller::changecflag()
-{
-     setCflag(!cflag());
-}
-
-void Controller::changesflag()
-{
-     setSflag(!sflag());
-}
-
 //鼠标事件
 void Controller::leftMousePressed(const QPointF &position)
 {
@@ -228,7 +121,67 @@ void Controller::sendRemoteEvent(RemoteEvent::EventType type, const int &key)
      QMetaObject::invokeMethod(m_socket, "writeToSocket", Q_ARG(RemoteEvent, event));
      qDebug()<<"套接字键盘事件";
 }
+//读图片数据
+void Controller::readScreenData(const QByteArray &screenData)
+{
+     QPixmap pixmap;
+     pixmap.loadFromData(screenData);
+     m_provider->setPixmap(pixmap);
+     emit needUpdate();
+}
+bool Controller::flag()
+{
+     return m_flag;
+}
 
+void Controller::setFlag(const bool &flag)
+{
+     if(m_flag==flag)
+        return;
+     m_flag=flag;
+     emit flagChanged();
+}
 
+bool Controller::cflag()
+{
+     return c_flag;
+}
 
+void Controller::setCflag(const bool &flag)
+{
+     if(c_flag==flag)
+        return;
+     c_flag=flag;
+     emit cflagChanged();
+}
+
+bool Controller::sflag()
+{
+     return s_flag;
+}
+
+void Controller::setSflag(const bool &flag)
+{
+     if(s_flag==flag)
+        return;
+     s_flag=flag;
+     emit cflagChanged();
+}
+void Controller::changeflag()
+{
+     setFlag(!flag());
+     if(flag()&&!cflag()){//为true主连接断开语音通信也应该断开
+        discommunication();
+     }
+}
+
+void Controller::changecflag()
+{
+     setCflag(!cflag());
+}
+
+void Controller::changesflag()
+{
+     setSflag(!sflag());
+}
 

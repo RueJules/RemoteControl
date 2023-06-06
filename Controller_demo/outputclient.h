@@ -20,8 +20,6 @@ public slots:
 private:
     QAudioSource *input;
     QIODevice *inputDevice;
-//SocketAudio *m_socketWrite;
-
 };
 
 #endif // OUTPUTCLIENT_H

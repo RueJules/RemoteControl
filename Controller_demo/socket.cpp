@@ -36,8 +36,8 @@ void Socket::writeToSocket(const RemoteEvent &event)//把事件转化为信息�
     BlockHeader header = { EVENT_TYPE, data.size() };
     DataBlock block = { header, data };
     out.device()->seek(0);
-    out << block;//再把block写入data中？？
-    write(data);//再把data写入套接字？？
+    out << block;//再把block写入data中
+    write(data);//再把data写入套接字
     flush();
 }
 
